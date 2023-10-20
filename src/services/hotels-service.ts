@@ -2,6 +2,7 @@ import { TicketStatus } from '@prisma/client';
 import { invalidDataError, notFoundError } from '@/errors';
 import { cannotListHotelsError } from '@/errors/cannot-list-hotels-error';
 import { enrollmentRepository, hotelRepository, ticketsRepository } from '@/repositories';
+import { generateRemainingVacancies, generateType } from '@/utils/hotelService';
 
 async function validateUserBooking(userId: number) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
@@ -23,7 +24,11 @@ async function getHotels(userId: number) {
   const hotels = await hotelRepository.findHotels();
   if (hotels.length === 0) throw notFoundError();
 
-  return hotels;
+  return hotels.map(({ Rooms, ...rest }) => ({
+    ...rest,
+    type: generateType(Rooms),
+    remainingVacancies: generateRemainingVacancies(Rooms)
+  }));
 }
 
 async function getHotelsWithRooms(userId: number, hotelId: number) {
