@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import faker from '@faker-js/faker';
 import * as jwt from 'jsonwebtoken';
 import { TicketStatus } from '@prisma/client';
+import { number } from 'joi';
 import { createEnrollmentWithAddress, createPayment, createTicket, createTicketType, createUser } from '../factories';
 import { cleanDb, generateValidToken } from '../helpers';
 import { createHotel, createRoomWithHotelId } from '../factories/hotels-factory';
@@ -121,6 +122,7 @@ describe('GET /hotels', () => {
       await createPayment(ticket.id, ticketType.price);
 
       const createdHotel = await createHotel();
+      await createRoomWithHotelId(createdHotel.id);
 
       const response = await server.get('/hotels').set('Authorization', `Bearer ${token}`);
 
@@ -133,6 +135,8 @@ describe('GET /hotels', () => {
           image: createdHotel.image,
           createdAt: createdHotel.createdAt.toISOString(),
           updatedAt: createdHotel.updatedAt.toISOString(),
+          type: expect.any(String),
+          remainingVacancies: expect.any(Number),
         },
       ]);
     });
@@ -162,6 +166,8 @@ describe('GET /hotels/:hotelId', () => {
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
+
+
 
   describe('when token is valid', () => {
     it('should respond with status 404 when user has no enrollment ', async () => {
