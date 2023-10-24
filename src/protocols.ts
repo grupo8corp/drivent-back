@@ -54,5 +54,9 @@ export type InputBookingBody = {
   roomId: number;
 };
 
+export type InputActivitiesBody = {
+  activityId: number
+};
+
 export type CreateBookingParams = Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>;
 export type UpdateBookingParams = Omit<Booking, 'createdAt' | 'updatedAt'>;

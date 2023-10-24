@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker';
 import { PrismaClient } from "@prisma/client";
 import dayjs from "dayjs";
 const prisma = new PrismaClient();
@@ -15,8 +16,43 @@ async function main() {
       },
     });
   }
-
   console.log({ event });
+
+  let activities = await prisma.activity.findMany();
+  if (activities.length === 0){
+    await prisma.activity.createMany({
+      data: [
+        {
+          auditory: "LATERAL",
+          capacity: 5,
+          startsAt: faker.date.soon(),
+          endsAt: faker.date.soon(10),
+          name: faker.lorem.words(),
+        },
+        {
+          auditory: "MAIN",
+          capacity: 4,
+          startsAt: faker.date.soon(4),
+          endsAt: faker.date.soon(12),
+          name: faker.lorem.words(),
+        },
+        {
+          auditory: "WORKSHOP",
+          capacity: 1,
+          startsAt: faker.date.soon(2),
+          endsAt: faker.date.soon(14),
+          name: faker.lorem.words(),
+        },
+        {
+          auditory: "LATERAL",
+          capacity: 1,
+          startsAt: faker.date.soon(2),
+          endsAt: faker.date.soon(14),
+          name: faker.lorem.words(),
+        },
+      ]
+    })
+  }
 }
 
 main()

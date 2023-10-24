@@ -19,6 +19,7 @@ model User {
   Session    Session[]
   Enrollment Enrollment[]
   Booking    Booking?
+  UserInActivity UserInActivity[]
 }
 
 model Session {
@@ -137,4 +138,30 @@ model Booking {
   roomId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id           Int          @id @default(autoincrement())
+  name         String
+  startsAt     DateTime
+  endsAt       DateTime
+  auditory     ActivityAuditory
+  capacity     Int
+  Participants UserInActivity[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum ActivityAuditory {
+  MAIN
+  LATERAL
+  WORKSHOP
+}
+
+model UserInActivity {
+  id         Int      @id @default(autoincrement())
+  activityId Int      
+  userId     Int
+  Activity   Activity @relation(fields: [activityId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
 }
