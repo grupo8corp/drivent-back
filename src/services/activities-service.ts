@@ -3,19 +3,24 @@ import { activitiesRepository } from "@/repositories";
 
 async function getActivities() {
   const activities = await activitiesRepository.findMany();
-  return activities.map(({ _count, ...rest }) => ({ ...rest, participantsCount: _count.Participants }));
-}
+  return activities.map(({ _count: { Participants }, capacity, ...rest }) => ({ ...rest, capacity, remainingVacancies: capacity - Participants }));
+};
 
 async function postParticipant(activityId: number, userId: number) {
   const activity = await activitiesRepository.findActivityById(activityId);
   if (!activity) throw notFoundError();
+
   if (activity.capacity === activity._count.Participants) throw conflictError('This activity already have reached its maximum capacity of participants');
 
-  const participant = await activitiesRepository.findParticipantByInput(activityId, userId);
-  if (participant) throw conflictError('You cannot participate in two of the same activity');
+  const participantActivity = await activitiesRepository.findParticipantByUserId(userId);
+  if (participantActivity.some(({ Activity: { startsAt, endsAt }}) => {
+    if (startsAt.toLocaleDateString() === activity.startsAt.toLocaleDateString()){
+      if (startsAt.getUTCHours() >= activity.startsAt.getUTCHours() && endsAt.getUTCHours() <= activity.endsAt.getUTCHours()) return true
+    }
+  })) throw conflictError('You cannot participant in events that occur on the same time');
 
-  await activitiesRepository.createParticipant(activityId, userId);
-}
+  return await activitiesRepository.createParticipant(activityId, userId);
+};
 
 export const activitiesService = {
   getActivities,

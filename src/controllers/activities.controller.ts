@@ -12,5 +12,5 @@ export async function getActivities(req: AuthenticatedRequest, res: Response) {
 export async function postParticipant(req: AuthenticatedRequest, res: Response) {
   const body = req.body as InputActivitiesBody;
   const participant = await activitiesService.postParticipant(body.activityId, req.userId);
-  return res.status(httpStatus.OK).send(participant);
+  return res.status(httpStatus.CREATED).send(participant);
 }

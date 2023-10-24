@@ -25,15 +25,15 @@ async function main() {
         {
           auditory: "LATERAL",
           capacity: 5,
-          startsAt: faker.date.soon(),
-          endsAt: faker.date.soon(10),
+          startsAt: dayjs().add(1, "hours").toDate(),
+          endsAt: dayjs().add(2, "hours").toDate(),
           name: faker.lorem.words(),
         },
         {
           auditory: "MAIN",
           capacity: 4,
-          startsAt: faker.date.soon(4),
-          endsAt: faker.date.soon(12),
+          startsAt: dayjs().add(2, "hours").toDate(),
+          endsAt: dayjs().add(3, "hours").toDate(),
           name: faker.lorem.words(),
         },
         {

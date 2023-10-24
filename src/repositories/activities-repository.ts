@@ -8,7 +8,12 @@ async function findMany() {
           Participants: true
         }
       },
-      Participants: true
+      Participants: {
+        select: {
+          id: true, 
+          userId: true
+        }
+      }
     }
   });
 };
@@ -19,6 +24,8 @@ async function findActivityById(activityId: number) {
       id: activityId
     },
     select: {
+      startsAt: true,
+      endsAt: true,
       _count: {
         select: {
           Participants: true
@@ -27,14 +34,19 @@ async function findActivityById(activityId: number) {
       capacity: true
     }
   })
-}
+};
 
-async function findParticipantByInput(activityId: number, userId: number) {
-  return prisma.userInActivity.findFirst({
+async function findParticipantByUserId(userId: number) {
+  return prisma.userInActivity.findMany({
     where: {
-      AND: {
-        activityId,
-        userId
+      userId
+    },
+    select: {
+      Activity: {
+        select: {
+          endsAt: true,
+          startsAt: true
+        }
       }
     }
   });
@@ -52,6 +64,6 @@ async function createParticipant(activityId: number, userId: number) {
 export const activitiesRepository = {
   findMany,
   findActivityById,
-  findParticipantByInput,
+  findParticipantByUserId,
   createParticipant
 };
