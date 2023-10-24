@@ -3,7 +3,7 @@ import { activitiesRepository } from "@/repositories";
 
 async function getActivities() {
   const activities = await activitiesRepository.findMany();
-  return activities.map(({ _count, ...rest }) => ({ ...rest, participantsCount: _count.Participants }));
+  return activities.map(({ _count: { Participants }, capacity, ...rest }) => ({ ...rest, capacity, remainingVacancies: capacity - Participants }));
 }
 
 async function postParticipant(activityId: number, userId: number) {
