@@ -15,7 +15,14 @@ async function postParticipant(activityId: number, userId: number) {
   const participantActivity = await activitiesRepository.findParticipantByUserId(userId);
   if (participantActivity.some(({ Activity: { startsAt, endsAt }}) => {
     if (startsAt.toLocaleDateString() === activity.startsAt.toLocaleDateString()){
-      if (startsAt.getUTCHours() >= activity.startsAt.getUTCHours() && endsAt.getUTCHours() <= activity.endsAt.getUTCHours()) return true
+      const mineStartTime = startsAt.getUTCHours();
+      const mineEndTime = endsAt.getUTCHours();
+
+      const iWantStartTime = activity.startsAt.getUTCHours();
+      const iWantEndTime = activity.endsAt.getUTCHours();
+
+      if (iWantStartTime <= mineEndTime && iWantStartTime >= mineStartTime) return true;
+      if (mineEndTime >= iWantStartTime && mineEndTime <= iWantEndTime) return true;
     }
   })) throw conflictError('You cannot participant in events that occur on the same time');
 
