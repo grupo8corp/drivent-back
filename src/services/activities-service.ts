@@ -19,7 +19,7 @@ async function postParticipant(activityId: number, userId: number) {
       const mineEndTime = endsAt.getUTCHours();
 
       const iWantStartTime = activity.startsAt.getUTCHours();
-      const iWantEndTime = activity.startsAt.getUTCHours();
+      const iWantEndTime = activity.endsAt.getUTCHours();
 
       if (iWantStartTime <= mineEndTime && iWantStartTime >= mineStartTime) return true;
       if (mineEndTime >= iWantStartTime && mineEndTime <= iWantEndTime) return true;
