@@ -9,6 +9,7 @@ export async function getBooking(req: AuthenticatedRequest, res: Response) {
 
   return res.status(httpStatus.OK).send({
     id: booking.id,
+    Hotel: booking.Hotel,
     Room: booking.Room,
   });
 }
